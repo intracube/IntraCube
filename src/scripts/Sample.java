@@ -18,15 +18,15 @@ import org.intracube.script.Script;
 public class Sample extends Script{
 
 	@Override
-	public boolean onStart() {
+	public boolean init() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
-	public int loop() {
+	public int loop(){
 		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -38,7 +38,6 @@ public class Sample extends Script{
 	@Override
 	public void draw(Graphics2D g) {
 		// TODO Auto-generated method stub
-		
 	}
-
+	
 }
