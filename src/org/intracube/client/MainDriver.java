@@ -51,7 +51,7 @@ public class MainDriver implements ClientElements {
 		if (!isRunning()){
 			new LTM(script, sClass, tmrMain);
 			log.show("'" + new ManRead().getScriptName() + "' has started.");
-			start = script.onStart();
+			start = script.init();
 		}else{
 			assert start = false;
 		}
