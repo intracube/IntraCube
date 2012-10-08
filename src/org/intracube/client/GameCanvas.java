@@ -1,5 +1,6 @@
 package org.intracube.client;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
@@ -22,9 +23,10 @@ public class GameCanvas extends JPanel {
 		requestFocus();
     }
 
-	@Override
+    @Override
 	public void paintComponent(Graphics g) {
+		g.setColor(Color.black);
+		g.fillRect(0,0,10000,10000);
 		script.draw((Graphics2D)g);
 	}
-
 }
