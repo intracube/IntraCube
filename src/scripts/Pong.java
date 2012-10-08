@@ -28,7 +28,7 @@ public class Pong extends Script{
 
 	private Task taskUser, taskComp;
 	@Override
-	public boolean onStart() {
+	public boolean init() {
 		taskUser = new UserControl();
 		taskComp = new CompControl();
 
