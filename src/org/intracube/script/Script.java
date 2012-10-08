@@ -19,7 +19,7 @@ public abstract class Script implements ClientElements{
 
 	private static boolean sleepStat = false;
 
-	public abstract boolean onStart();
+	public abstract boolean init();
 	public abstract int loop();
 	public abstract void draw(Graphics2D g);
 	public abstract void onFinish();
