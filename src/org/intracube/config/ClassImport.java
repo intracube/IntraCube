@@ -7,6 +7,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.swing.JOptionPane;
+
 public class ClassImport {
 
 	public ArrayList<Class<?>> getClasses(){
@@ -32,15 +34,17 @@ public class ClassImport {
 						classList.add(cl.loadClass(s));
 					} catch (Exception e) {
 						e.printStackTrace();
+					} catch (NoClassDefFoundError e2){
+						JOptionPane.showMessageDialog(null, "Error. Check package for: " + e2.getLocalizedMessage());
 					}
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace();   
 		}
 		return classList;
 	}
-	
+
 	public File getScriptSourceDirectory(){
 		String os = System.getProperty("os.name");
 		String docDir = "";
@@ -55,27 +59,27 @@ public class ClassImport {
 		}
 		return new File(docDir + File.separator + "IntraCube Scripts" + File.separator + "Scripts" + File.separator + "Sources");	
 	}
-	
+
 	public ArrayList<String> getScriptNames(){
 		ArrayList<String> names = new ArrayList<String>();
-		
+
 		for (int i=0; i<getClasses().size(); i++){
 			names.add(getClasses().get(i).getName());
 		}
-		
+
 		return names;
 	}
-	
+
 	public Hashtable<String, Class<?>> getHashtable(){
 		ArrayList<Class<?>> classes = getClasses();
 		ArrayList<String> names = getScriptNames();
-		
+
 		Hashtable<String, Class<?>> table = new Hashtable<String, Class<?>>();
-		
+
 		for (int i=0; i<names.size(); i++){
 			table.put(names.get(i), classes.get(i));
 		}
-		
+
 		return table;
 	}
 }

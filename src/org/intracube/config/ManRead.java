@@ -18,8 +18,7 @@ public class ManRead {
 
 		for(Annotation annotation : annotations){
 			if(annotation instanceof ScriptManifest){
-				ScriptManifest myAnnotation = (ScriptManifest) annotation;
-				return myAnnotation;
+				return (ScriptManifest) annotation;
 			}
 		}
 		return null;

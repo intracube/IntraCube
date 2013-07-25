@@ -17,12 +17,12 @@ import org.intracube.api.elements.Priority;
  */
 public class Logger {
 
-	private JList logText; 
-	private ArrayList<Color> backGC;
-	private ArrayList<Color> foreGC;
-	private DefaultListModel listModel;
+	private static JList<?> logText = ClientElements.client.getLog(); 
+	private ArrayList<Color> foreGC, backGC;
+	private DefaultListModel<String> listModel = ClientElements.client.getListModel();;
 	private String message = "", lastMessage = "none";
 	private int counter = 1;
+	private CustomRender render = new CustomRender();
 
 	public Logger(){
 		if (backGC == null){
@@ -31,6 +31,7 @@ public class Logger {
 		if (foreGC == null){
 			foreGC = new ArrayList<Color>();
 		}
+		logText.setCellRenderer(render);
 	}
 
 	/**
@@ -38,21 +39,16 @@ public class Logger {
 	 * @param message
 	 */
 	public void show(String message){
-		logText = ClientElements.client.getLog();
-		logText.setFocusable(false);
-		listModel = ClientElements.client.getListModel();
-
 		backGC.add(Color.LIGHT_GRAY);
 		foreGC.add(Color.black);
 
 		lastMessage = message;
 
 		listModel.addElement(formatMsg(message));
-		logText.setCellRenderer(new CustomRender(backGC, foreGC));
+		render.setElements(backGC, foreGC);
 		counter ++;
+
 		logText.ensureIndexIsVisible(logText.getLastVisibleIndex()+1);
-		
-		logText.repaint();
 	}
 
 	/**
@@ -61,20 +57,16 @@ public class Logger {
 	 * @param color
 	 */
 	public void show(String message, Color color){	
-		logText = ClientElements.client.getLog();
-		listModel = ClientElements.client.getListModel();
-
 		backGC.add(Color.LIGHT_GRAY);
 		foreGC.add(color);
 
 		lastMessage = message;
 
 		listModel.addElement(formatMsg(message));
-		logText.setCellRenderer(new CustomRender(backGC, foreGC));
+		render.setElements(backGC, foreGC);
 		counter ++;
-		logText.ensureIndexIsVisible(logText.getLastVisibleIndex()+1);
-		
-		logText.repaint();		
+
+		logText.ensureIndexIsVisible(logText.getLastVisibleIndex()+1);		
 	}
 
 	/**
@@ -83,9 +75,6 @@ public class Logger {
 	 * @param priority
 	 */
 	public void show(String message, Priority priority){	
-		logText = ClientElements.client.getLog();
-		listModel = ClientElements.client.getListModel();
-
 		switch (priority){
 		case LOW: backGC.add(Color.white); break;
 		case NORMAL: backGC.add(Color.LIGHT_GRAY); break;
@@ -102,12 +91,10 @@ public class Logger {
 		lastMessage = message;
 
 		listModel.addElement(formatMsg(message));
-		logText.setCellRenderer(new CustomRender(backGC, foreGC));
+		render.setElements(backGC, foreGC);
 		counter ++;
 
 		logText.ensureIndexIsVisible(logText.getLastVisibleIndex()+1);
-
-		logText.repaint();
 	}
 
 	/**
@@ -149,14 +136,18 @@ public class Logger {
 		private static final long serialVersionUID = -5707651047493700867L;
 		private ArrayList<Color> backC, foreC;
 
-		public CustomRender(ArrayList<Color> back, ArrayList<Color> fore) {
+		public CustomRender() {
 			setOpaque(true);
+		}
+
+		public void setElements(ArrayList<Color> back, ArrayList<Color> fore){
 			this.backC = back;
 			this.foreC = fore;
 		}
 
-		public Component getListCellRendererComponent(final JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) { // jlist was not final
+		public Component getListCellRendererComponent(final JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus){
 			super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
 			try{
 				setForeground(foreC.get(index-1));
 				setBackground(backC.get(index-1));
@@ -164,7 +155,7 @@ public class Logger {
 				// ignore exception
 			}
 			setText(value.toString());
-			
+
 			return this;
 		}
 	}

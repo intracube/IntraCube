@@ -52,8 +52,6 @@ public class MainDriver implements ClientElements {
 			new LTM(script, sClass, tmrMain);
 			log.show("'" + new ManRead().getScriptName() + "' has started.");
 			start = script.init();
-		}else{
-			assert start = false;
 		}
 
 		if (start) { 
@@ -98,7 +96,6 @@ public class MainDriver implements ClientElements {
 				log.show(ex.toString(), Priority.SEVERE);
 				timer.cancel();
 				timer = null;
-				
 				// closeBackground(); TODO
 			}
 		}

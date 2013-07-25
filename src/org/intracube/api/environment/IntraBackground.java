@@ -1,4 +1,4 @@
-package org.intracube.environment;
+package org.intracube.api.environment;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -33,6 +33,11 @@ public class IntraBackground implements ClientElements {
 		return new Point(location.x+client.getMainPanel().getWidth(), location.y+client.getMainPanel().getHeight());
 	}
 
+	/**
+	 * Moves background in given direction (use only: UP, DOWN, LEFT, RIGHT)
+	 * @param dir
+	 * @param amount
+	 */
 	public void move(Direction dir, int amount){
 		if (dir == Direction.UP){
 			location = new Point(location.x, location.y+amount);
@@ -45,6 +50,10 @@ public class IntraBackground implements ClientElements {
 		}
 	}
 
+	/**
+	 * updates background with supplied graphics
+	 * @param g Graphics to use
+	 */
 	public void update(Graphics2D g){
 		g.drawImage(image, location.x, location.y, null);
 	}

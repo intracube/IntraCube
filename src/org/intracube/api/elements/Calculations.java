@@ -5,7 +5,13 @@ import java.util.Random;
 
 public class Calculations {
 
-	public static int random(int min, int max){
+	/**
+	 * returns a random integer between given min and max
+	 * @param min int Min bound
+	 * @param max int Max bound
+	 * @return
+	 */
+	public int random(int min, int max){
 		Random rand = new Random();
 		int randomNum = rand.nextInt(max - min + 1) + min;
 
@@ -22,7 +28,7 @@ public class Calculations {
 		return sum;
 	}
 
-	public double addD(double...nums){
+	public double add(double...nums){
 		double sum = 0.0;
 		for (int i=0; i<nums.length; i++){
 			sum += nums[i];
@@ -40,7 +46,7 @@ public class Calculations {
 		return sum;
 	}
 
-	public double multiplyD(double...nums){
+	public double multiply(double...nums){
 		double sum = 0.0;
 		for (int i=0; i<nums.length; i++){
 			sum += nums[i];
@@ -59,7 +65,7 @@ public class Calculations {
 		return (sum/length);
 	}
 
-	public double averageD(double...nums){
+	public double average(double...nums){
 		double sum = 0.0;
 		double length = nums.length;
 		for (int i=0; i<nums.length; i++){

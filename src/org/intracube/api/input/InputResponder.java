@@ -3,6 +3,7 @@ package org.intracube.api.input;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 import org.intracube.api.elements.ClientElements;
 
@@ -13,6 +14,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 	private static boolean isReleased = false;
 	//private static boolean isTyped = false;
 	private static String keyP = "", keyR = ""; //, keyT ="";
+	private static ArrayList<String> keyPAll = new ArrayList<String>();
 	private static KeyEvent kPE=null, kRE=null; //, kTE =null;
 
 	//private static boolean mouseClick = false;
@@ -29,8 +31,10 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 		kPE = e;
 		keyP = String.valueOf(e.getKeyChar());
 		isPressed = true;
-		
-		
+		if (!keyPAll.contains(keyP)){
+			keyPAll.add(keyP);
+		}
+
 		kRE = null;
 		keyR = "";
 		isReleased = false;
@@ -41,7 +45,8 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 		kRE = e;
 		keyR = String.valueOf(e.getKeyChar());
 		isReleased = true;
-		
+
+		keyPAll.remove(keyPAll.indexOf(keyR));
 		kPE = null;
 		keyP = "";
 		isPressed = false;
@@ -49,25 +54,41 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+
 	}
 
 	///// gets
 
+	/**
+	 * gets if any key on the keyboard is pressed
+	 * @return boolean true if a key on the keyboard is pressed
+	 */
 	public boolean isPressed(){
 		return isPressed;
 	}
 
+	/**
+	 * gets if key on the keyboard is released
+	 * @return boolean true if key on keyboard is released
+	 */
 	public boolean isReleased(){
 		return isReleased;
 	}
 
 	/*public boolean isTyped(){
-		
+
 	}*/
 
 	public String getKeyPressed(){
 		return keyP;
+	}
+
+	public ArrayList<String> getAllKeysPressed(){
+		return keyPAll;
+	}
+
+	public boolean isKeyPressed(String key){
+		return keyPAll.contains(key);
 	}
 
 	public String getKeyReleased(){
@@ -87,7 +108,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 	}
 
 	/*public KeyEvent getKeyTypedEvent(){
-	
+
 	}*/
 
 	/////////////////// Mouse
@@ -95,7 +116,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
+
 	}
 
 	@Override
@@ -111,7 +132,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 	public void mouseExited(MouseEvent e) {
 		mouseExit = true;
 		mExE = e;
-		
+
 		mouseEnter = false;
 		mEnE = null;
 	}
@@ -121,7 +142,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 		mousePress = true;
 		mouseButtonPressed = e.getButton();
 		mPE = e;
-		
+
 
 		mouseRelease = false;
 		mouseButtonReleased = -1;
@@ -133,7 +154,7 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 		mouseRelease = true;
 		mouseButtonReleased = e.getButton();
 		mRE = e;
-		
+
 		mousePress = false;
 		mouseButtonPressed = -1;
 		mPE = null;
@@ -142,13 +163,21 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 	////// gets
 
 	/*public boolean isClicked(){
-		
+
 	}*/
 
+	/**
+	 * gets if mouse enters game panel
+	 * @return boolean true if mouse enters panel
+	 */
 	public boolean isMouseEnter(){
 		return mouseEnter;
 	}
 
+	/**
+	 * gets if mouse exits game panel
+	 * @return boolean true if mouse exits panel
+	 */
 	public boolean isMouseExit(){
 		return mouseExit;
 	}
@@ -194,26 +223,25 @@ public class InputResponder implements KeyListener, MouseListener, MouseMotionLi
 	}
 
 	// Mouse motion
-	
+
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
-	
+
 	// Other
-	
+
 	public Point getAbsMousePos(){
 		return new Point(MouseInfo.getPointerInfo().getLocation().x-client.getMainPanel().getLocationOnScreen().x, 
 				MouseInfo.getPointerInfo().getLocation().y-client.getMainPanel().getLocationOnScreen().y);
 	}
-	
+
 	public Point getMousePos(){
 		return new Point(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y);
 	}

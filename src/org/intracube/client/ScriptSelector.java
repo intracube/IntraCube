@@ -17,6 +17,7 @@ import javax.swing.JPopupMenu.Separator;
 
 import org.intracube.api.elements.ClientElements;
 import org.intracube.api.elements.Priority;
+import org.intracube.config.Account;
 import org.intracube.config.ClassImport;
 import org.intracube.config.ManRead;
 
@@ -36,10 +37,21 @@ public class ScriptSelector extends javax.swing.JDialog implements ClientElement
 	public ScriptSelector() throws ClassNotFoundException, IOException{
 		ArrayList<Class<?>> classes = new ClassImport().getClasses();
 		String[] items = new String[classes.size()];
-
+		int numScripts = 0;
+		String status = new Account().getGroup();
 		for (int i=0; i<classes.size(); i++){
 			try{
 				items[i] = new String(classes.get(i).getName() + " ► " + new ManRead().getAnnotation(classes.get(i)).description()); // in future versions get name from manifest
+				numScripts++;
+				if (!status.equals("diamond") && !status.equals("admin") && !status.equals("mod")){
+					if (!status.equals("vip") && numScripts==5){
+						JOptionPane.showMessageDialog(null, "Only first 5 scripts are shown. If you would like to store more, upgrade to VIP or Diamond at www.intracube.org");
+						break;
+					}else if (status.equals("vip") && numScripts==25){
+						JOptionPane.showMessageDialog(null, "Only first 25 scripts are shown. If you would like to store unlimited scripts, upgrade to Diamond at www.intracube.org");
+						break;
+					}
+				}
 			}catch (Exception ex){
 				
 			}
@@ -50,7 +62,7 @@ public class ScriptSelector extends javax.swing.JDialog implements ClientElement
 	private void initComponents(String[] nms) {
 		jPanel1 = new JPanel();
 		jScrollPane1 = new JScrollPane();
-		lstScripts = new JList(nms);
+		lstScripts = new JList<Object>(nms);
 		btnRun = new JButton();
 		btnCancel = new JButton();
 		jMenuBar1 = new JMenuBar();
@@ -249,7 +261,7 @@ public class ScriptSelector extends javax.swing.JDialog implements ClientElement
 	private JPanel jPanel1;
 	private JScrollPane jScrollPane1;
 	private Separator jSeparator1;
-	private JList lstScripts;
+	private JList<Object> lstScripts;
 	private JMenuItem mItemExit;
 	private JMenuItem mItemImport;
 	private JMenu menuFile;

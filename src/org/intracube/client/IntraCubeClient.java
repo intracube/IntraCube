@@ -1,9 +1,18 @@
 package org.intracube.client;
 
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -25,10 +34,10 @@ import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JPopupMenu.Separator;
-import javax.swing.border.TitledBorder;
 
 import org.intracube.api.elements.ClientElements;
 import org.intracube.api.elements.Priority;
+import org.intracube.config.Account;
 import org.intracube.config.ManRead;
 
 
@@ -43,7 +52,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		return panelMain;
 	}
 
-	public JList getLog(){
+	public JList<String> getLog(){
 		return txtLog;
 	}
 
@@ -62,7 +71,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		}
 	}
 
-	public DefaultListModel getListModel(){
+	public DefaultListModel<String> getListModel(){
 		return IntraCubeClient.lstModel;
 	}
 
@@ -80,36 +89,35 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		panelMain = new GameCanvas();
 		lblMsg = new JLabel();
 		panelLog = new JPanel();
-		jScrollPane1 = new JScrollPane();
-		txtLog = new JList();
+		sPaneLog = new JScrollPane();
+		txtLog = new JList<String>();
 
 		menuFile = new JMenu();
 		mItemRun = new JMenuItem();
 		mItemStop = new JMenuItem();
-		jSeparator1 = new Separator();
+		menuSeparator1 = new Separator();
 		mItemSS = new JMenuItem();
-		jSeparator2 = new Separator();
+		menuSeparator2 = new Separator();
 		mItemExit = new JMenuItem();
 		menuView = new JMenu();
 		mItemLogc = new JCheckBoxMenuItem();
 		menuHelp = new JMenu();
+		menuLogin = new JMenu();
 		mItemSite = new JMenuItem();
 		mItemProject = new JMenuItem();
 		mItemAbout = new JMenuItem();
-		jSeparator3 = new Separator();
+		menuSeparator3 = new Separator();
 		mItemSDecription = new JMenuItem();
 		glass = new JPanel();
 
 		menuMain.setBackground(Color.orange);//(51,255,204));
-		TitledBorder titledBorder = BorderFactory.createTitledBorder(null, "IntraCube v " + version); // needed?
-		menuMain.setBorder(titledBorder);
 		menuHelp.getPopupMenu().setLightWeightPopupEnabled(false);
 		menuView.getPopupMenu().setLightWeightPopupEnabled(false);
 		menuFile.getPopupMenu().setLightWeightPopupEnabled(false);
 
-		lstModel = new DefaultListModel();
+		lstModel = new DefaultListModel<String>();
 		lstModel.addElement("Welcome to IntraCube!");
-		txtLog = new JList(lstModel);
+		txtLog = new JList<String>(lstModel);
 
 		frameMaster.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frameMaster.setBackground(new Color(0, 0, 0));
@@ -132,17 +140,17 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		txtLog.setBackground(Color.LIGHT_GRAY);
 		txtLog.setFont(new Font("Monospaced",Font.BOLD,14)); 
 
-		jScrollPane1.setViewportView(txtLog);
+		sPaneLog.setViewportView(txtLog);
 
 		GroupLayout panelLogLayout = new GroupLayout(panelLog);
 		panelLog.setLayout(panelLogLayout);
 		panelLogLayout.setHorizontalGroup(
 				panelLogLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+				.addComponent(sPaneLog, GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
 		);
 		panelLogLayout.setVerticalGroup(
 				panelLogLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(jScrollPane1, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+				.addComponent(sPaneLog, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
 		);
 
 		menuMain.setBorder(BorderFactory.createEtchedBorder());
@@ -163,7 +171,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			}
 		});
 		menuFile.add(mItemRun);
-
 		mItemStop.setText("Stop Script");
 		mItemStop.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,7 +185,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		});
 		menuFile.add(mItemStop);
 
-		menuFile.add(jSeparator1);
+		menuFile.add(menuSeparator1);
 
 		mItemSS.setText("Screenshot");
 		mItemSS.addActionListener(new java.awt.event.ActionListener() {
@@ -187,7 +194,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			}
 		});
 		menuFile.add(mItemSS);
-		menuFile.add(jSeparator2);
+		menuFile.add(menuSeparator2);
 
 		mItemExit.setText("Exit");
 		mItemExit.addActionListener(new java.awt.event.ActionListener() {
@@ -237,7 +244,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			}
 		});
 		menuHelp.add(mItemAbout);
-		menuHelp.add(jSeparator3);
+		menuHelp.add(menuSeparator3);
 
 		mItemSDecription.setText("Script Description");
 		mItemSDecription.addActionListener(new java.awt.event.ActionListener() {
@@ -256,6 +263,22 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			}
 		});
 
+		menuMain.add(menuLogin);
+		menuLogin.setText("Login");
+		menuLogin.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				mItemLoginActionPerformed(arg0);
+			}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {}
+			@Override
+			public void mouseExited(MouseEvent arg0) {}
+			@Override
+			public void mousePressed(MouseEvent arg0) {}
+			@Override
+			public void mouseReleased(MouseEvent arg0) {}
+		});
 
 		GroupLayout layout = new GroupLayout(frameMaster.getContentPane());
 		frameMaster.getContentPane().setLayout(layout);
@@ -272,14 +295,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 						.addComponent(panelLog, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 		);
 
-		panelLog.getAccessibleContext().setAccessibleName("panelLog");
-
-		Toolkit tKit = Toolkit.getDefaultToolkit();
-		Dimension wndSize = tKit.getScreenSize();
-		int x = (wndSize.width - 750) / 2;
-		int y = (wndSize.height - 700) / 2;
-		frameMaster.setLocation(x,y);
-
 		systTimer = new Timer();
 		TimerTask task = new STM(systTimer);
 		systTimer.scheduleAtFixedRate(task, 1, 1);
@@ -288,6 +303,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 
 		frameMaster.setSize(750,700);
 		frameMaster.addWindowListener(this);
+		frameMaster.setLocationRelativeTo(null);
 
 		setUpGlass();
 
@@ -300,6 +316,10 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			if (!isUpdated()){
 				log.show("Client version outdated. Please upgrade to the newest version at", Priority.SEVERE);
 				log.show("http://www.intracube.org/", Priority.SEVERE);
+				setLMsgTxt("Disabled");
+				menuFile.setEnabled(false);
+				menuView.setEnabled(false);
+				menuHelp.setEnabled(false);
 			}
 		} catch (NumberFormatException e1) {
 			log.show("Unable to read version number.  Try again later.", Priority.SEVERE);
@@ -311,7 +331,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			log.show("IOException.", Priority.SEVERE);
 			e2.printStackTrace();
 		}
-		System.out.println("3.5");
 	}
 
 	private static class STM extends TimerTask {
@@ -340,10 +359,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 					mItemStop.setEnabled(false);
 					new Decorator().setTitle("IntraCube v " + version);
 				}
-
-				if (client.getLog() != null && client.getLog().isVisible() && new MainDriver().isRunning()){
-					client.getLog().ensureIndexIsVisible(client.getLog().getLastVisibleIndex()+1); 
-				}
 			}catch (Exception ex){
 				log.show("Error thrown during system execution.", Priority.SEVERE);
 				log.show("Client state: Unstable. Recommended to restart client.", Priority.SEVERE);
@@ -367,13 +382,9 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		glass.add(picLabel);
 		updateGlass();
 		glass.setVisible(true);
-		if (picLabel == null){
-			System.out.println("CALLED");
-		}
-
 	}
 	private JLabel picLabel = null;
-	private Image picLogo = new ImageIcon(getClass().getResource("/resources/IntraCubeLogoTitleClient.png")).getImage();
+	private Image picLogo = new ImageIcon(getClass().getResource("/resources/logo1darkextended.png")).getImage();
 
 	private void updateGlass(){
 		if (glass!= null && picLabel != null && lblMsg != null){
@@ -399,7 +410,8 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 			Thread[] tA= tS.toArray(new Thread[tS.size()]);
 			// timer.setName("System Timer")
 			for (int i=0; i< tA.length; i++){
-				if (tA[i].getName().startsWith("Timer") && !tA[i].getName().equals("Timer-0")){ // need check on system crashes
+				if ((tA[i].getName().startsWith("Timer") || tA[i].getName().startsWith("Thread")) && !tA[i].getName().equals("Timer-0")){ // need check on system crashes
+					tA[i].interrupt();
 					tA[i].stop(); // temporary work around
 				}
 			}
@@ -458,7 +470,7 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 
 	private void mItemProjectActionPerformed(java.awt.event.ActionEvent evt) {
 		try {
-			navigateToWeb(new URI( "http://www.github.com/IntraCube/source")); // edit
+			navigateToWeb(new URI( "http://www.github.com/intracube")); // edit
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -507,6 +519,36 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		}
 	}
 
+	protected void mItemLoginActionPerformed(MouseEvent e) {
+		Account acc = new Account();
+		if (((JMenu)e.getSource()).getText().equals("Login")){
+			JLabel lblUser = new JLabel("Username:");
+			JTextField username = new JTextField();
+			JLabel lblPass= new JLabel("Password:");
+			JTextField password = new JPasswordField();
+			Object[] obs = {lblUser, username, lblPass, password};
+			int result = JOptionPane.showConfirmDialog(null, obs, "Login", JOptionPane.OK_CANCEL_OPTION);
+
+			if (result == JOptionPane.OK_OPTION) {
+				String user = username.getText();
+				String pass = password.getText();
+
+				if (acc.login(user,pass)){
+					JOptionPane.showMessageDialog(null, "Login successful. Welcome, " + acc.getRealName() + ".");
+					log.show("Login successful. Welcome, " + acc.getRealName() + ".", Color.blue);
+				}else{
+					JOptionPane.showMessageDialog(null, "Invalid username and/or password.");
+					return;
+				}
+				menuLogin.setText("Logout");
+			}
+		}else{
+			acc.logout();
+			log.show("You have logged out.");
+			menuLogin.setText("Login");
+		}
+	}
+
 	@Override
 	public void windowClosing(WindowEvent arg0) {
 		if (new MainDriver().isRunning()){
@@ -544,19 +586,27 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
 			public void run() {
-				new IntraCubeClient();
-				frameMaster.setFocusable(true);
-				loader.setVisible(false);
-				frameMaster.setVisible(true);	
-				frameMaster.setIconImage(new ImageIcon(getClass().getResource("/resources/IntraCubeTaskbar.png")).getImage()); 
-				createMainDirectory();
+				try{
+					new IntraCubeClient();
+					frameMaster.setFocusable(true);
+					loader.setVisible(false);
+					frameMaster.setVisible(true);	
+					frameMaster.setIconImage(new ImageIcon(getClass().getResource("/resources/logoTask.png")).getImage());
+					createMainDirectory();
+				}catch (Exception ex2){
+					if (loader.isVisible()){
+						loader.setVisible(false);
+					}
+					JOptionPane.showMessageDialog(null, "Error. " + ex2.toString());
+					ex2.printStackTrace();
+					System.exit(0);
+				}
 			}
 		});
 	}
 
 	private static void createMainDirectory() {
 		try {
-			System.out.println(getPathDir());
 			if (!(new File(getPathDir()).exists())) {
 				String intraDirMainPath = getPathDir();
 
@@ -586,7 +636,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 
 						scanner.close();
 						out.close();		
-						System.out.println(compFile.toString());
 						compFile.createNewFile();
 					}
 				}catch (Exception ex){
@@ -601,7 +650,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 					String line = "";
 					while (scanner.hasNextLine()) {
 						line += scanner.nextLine() + "\n";
-						System.out.println(line);
 					}
 					FileOutputStream out = new FileOutputStream(fJDKFile);
 					new PrintStream(out).print(line);
@@ -616,7 +664,6 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 				File pathFile =new File(dir + File.separator + "Settings",fileName+".txt");
 				if(!pathFile.exists()){
 					String location = IntraCubeClient.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-					System.out.println(location);
 
 					FileOutputStream out = new FileOutputStream(pathFile);
 					new PrintStream(out).print(location);
@@ -686,10 +733,10 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 
 	private JMenu menuHelp;
 	private JMenu menuView;
-	private JScrollPane jScrollPane1;
-	private JSeparator jSeparator1;
-	private JSeparator jSeparator2;
-	private JSeparator jSeparator3;
+	private JScrollPane sPaneLog;
+	private JSeparator menuSeparator1;
+	private JSeparator menuSeparator2;
+	private JSeparator menuSeparator3;
 	private static JLabel lblMsg;
 	private JMenuItem mItemAbout;
 	private JMenuItem mItemExit;
@@ -700,13 +747,14 @@ public class IntraCubeClient implements ClientElements, WindowListener{
 	private JMenuItem mItemSDecription;
 	private JMenuItem mItemSS;
 	private JMenuItem mItemSite;
+	private JMenu menuLogin;
 	private JMenu menuFile;
 	private JMenuBar menuMain;
 	private static JPanel panelLog;
 	private static JPanel panelMain;
-	private static JList txtLog;
+	private static JList<String> txtLog;
 
-	private static DefaultListModel lstModel;
+	private static DefaultListModel<String> lstModel;
 	private static JPanel glass;
 	private Timer systTimer;
 

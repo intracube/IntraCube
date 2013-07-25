@@ -7,6 +7,7 @@ import org.intracube.api.elements.ClientElements;
 
 public class Collision implements ClientElements {
 
+	
 	public boolean isCollision(Sprite sprite1, Sprite sprite2){
 		return (getBounds(sprite1).intersects(getBounds(sprite2)));
 	}

@@ -19,7 +19,6 @@ public class Decorator extends JPanel {
 	private JPanel resizePanel  = new JPanel(new BorderLayout()) {
 
 		private static final long serialVersionUID = -8482725577803909298L;
-
 		@Override
 		protected void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D)g.create();
@@ -41,6 +40,7 @@ public class Decorator extends JPanel {
 			g2.dispose();
 			super.paintComponent(g);
 		}
+		
 	};
 	private JPanel contentPanel = new JPanel(new BorderLayout());
 	private int state = 0;

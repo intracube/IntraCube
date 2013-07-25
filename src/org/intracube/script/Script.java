@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.intracube.api.elements.Calculations;
 import org.intracube.api.elements.ClientElements;
 import org.intracube.api.elements.Priority;
 import org.intracube.client.IntraCubeClient;
@@ -41,7 +40,7 @@ public abstract class Script implements ClientElements{
 	 * @param min
 	 */
 	public static void sleep(int max, int min){
-		sleep(Calculations.random(max,min));
+		sleep(calc.random(max,min));
 	}
 
 	public static boolean isSleeping(){
@@ -55,11 +54,13 @@ public abstract class Script implements ClientElements{
 		task.start();	
 	}
 
-	public void stopTask(Task tsk){
-		Task task = tsk;
-		if (task==null) return;
+	public void stopTask(Task tsk){ // TODO
+		//Task task = tsk;
+		if (tsk==null) return;
 
-		task.terminate();	
+		tsk.terminate();
+		tsk = null;
+		//System.gc();
 	}
 
 	public static boolean isRunning(){
@@ -90,7 +91,7 @@ public abstract class Script implements ClientElements{
 	public Dimension getCanvasSize(){
 		return new IntraCubeClient().getMainPanel().getSize();
 	}
-
+		
 	/*public void log(String message) {
 	    new Logger().show(message);
     }*/

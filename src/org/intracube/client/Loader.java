@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -51,7 +50,7 @@ public class Loader extends javax.swing.JFrame {
 
 		lblPic.setIcon(new ImageIcon(picLogo));
 		
-		pB.setPreferredSize(new Dimension(300,20));
+		pB.setPreferredSize(new Dimension(455,20));
 		pB.setString("IntraCube");
 		pB.setStringPainted(true);
 				
@@ -62,14 +61,10 @@ public class Loader extends javax.swing.JFrame {
 		panelMain.add(lblStatus);
 		
 		this.setUndecorated(true);
-		this.setSize(300,150);
+		this.setSize(455,250);
 		this.add(panelMain);
-
-		Toolkit tKit = Toolkit.getDefaultToolkit();
-		Dimension wndSize = tKit.getScreenSize();
-		int x = (wndSize.width - 352) / 2;
-		int y = (wndSize.height - 97) / 2;
-		setLocation(x,y);
+		
+		this.setLocationRelativeTo(null);
 
 		setTitle("Start up");
 		startLoading();
@@ -85,7 +80,7 @@ public class Loader extends javax.swing.JFrame {
 	private static JLabel lblStatus, lblPic;
 	private JPanel panelMain;
 	private JProgressBar pB;
-	private Image picLogo = new ImageIcon(getClass().getResource("/resources/IntraCubeLogoTitleClient.png")).getImage();
+	private Image picLogo = new ImageIcon(this.getClass().getResource("/resources/intracubelogotitleclient2.png")).getImage();
 	
 }
 

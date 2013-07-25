@@ -41,10 +41,6 @@ public class Pong extends Script{
 	@Override
 	public int loop() {
 		moveBall();
-
-		if (userPaddle.isClicked()){
-			log.show("CLICKED");
-		}
 		return 10;
 	}
 
@@ -87,19 +83,19 @@ public class Pong extends Script{
 	}
 
 	private int x = 370, y = 195;
-	private int velX = 2, velY = 3;
+	private int velX = 4, velY = 5;
 
 	private void moveBall(){
 		x += velX;
 		y += velY;        
 
 		if (collision.isCollision(userPaddle, ball)) {
-			x = 50;
+			x+=8;
 			velX *= -1;
 		}
 
 		if (collision.isCollision(compPaddle, ball)) {
-			x = 635;
+			x-=8;
 			velX *= -1;  
 		}
 
@@ -108,8 +104,8 @@ public class Pong extends Script{
 			resetBallLoc();
 			x = 370;
 			y = 195;
-			velX = 2;
-			velY = 3;
+			velX = 4;
+			velY = 5;
 			sleep(1000);	
 			log.show("Computer player won the point :(");
 		} else if (ball.getLocation().x>=740){
@@ -117,8 +113,8 @@ public class Pong extends Script{
 			resetBallLoc();
 			x = 370;
 			y = 195;
-			velX = 2;
-			velY = 3;
+			velX = 4;
+			velY = 5;
 			sleep(1000);
 			log.show("You won the point!");
 		}
